@@ -1,0 +1,3 @@
+# Files referring to private datafiles:
+**/__private_data_location.yaml
+## For each such ignored file, there should be a corresponding __private_data_location.yaml.sample which illustrates the structure.
