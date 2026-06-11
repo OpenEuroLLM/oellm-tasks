@@ -1,0 +1,22 @@
+task: cus_qa_text_cz_orig
+dataset_path: ufal/cus-qa
+dataset_name: text-CZ
+test_split: dev
+output_type: generate_until
+system_prompt: "You are an experienced trivia game contestant. Provide a short and correct answer!"
+doc_to_text: "{{question_orig}}"
+doc_to_target: "{{answer_orig}}"
+generation_kwargs:
+  until:
+    - "\n"
+  max_gen_toks: 64
+metric_list:
+  - metric: bleu
+    aggregation: mean
+    higher_is_better: true
+  - metric: chrf
+    aggregation: mean
+    higher_is_better: true
+  - metric: rougeL
+    aggregation: mean
+    higher_is_better: true
