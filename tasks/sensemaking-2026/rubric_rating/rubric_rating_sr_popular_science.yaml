@@ -1,0 +1,7 @@
+include: _rubric_rating.yaml
+
+task: rubric_rating_sr_popular_science
+
+task_alias: sr_popular_science
+
+process_docs: !function utils.process_sr_popular_science

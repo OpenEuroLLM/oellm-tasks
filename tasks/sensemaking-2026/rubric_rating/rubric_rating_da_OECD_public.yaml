@@ -1,0 +1,7 @@
+include: _rubric_rating.yaml
+
+task: rubric_rating_da_OECD_public
+
+task_alias: da_OECD_public
+
+process_docs: !function utils.process_da_OECD_public

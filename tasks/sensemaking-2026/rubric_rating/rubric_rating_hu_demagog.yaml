@@ -1,0 +1,7 @@
+include: _rubric_rating.yaml
+
+task: rubric_rating_hu_demagog
+
+task_alias: hu_demagog
+
+process_docs: !function utils.process_hu_demagog

@@ -1,0 +1,21 @@
+task: rubric_rating
+dataset_path: json
+dataset_kwargs:
+  data_files:
+    test: /home/sindelar/dir/dev.rubric.json
+test_split: test
+output_type: multiple_choice
+process_docs: !function utils.process_docs
+doc_to_text: !function utils.doc_to_text_long
+doc_to_target: label
+doc_to_choice: ["0", "1", "2"]
+fewshot_config:
+  sampler: first_n # Ensures it takes your hardcoded list in exact order
+  samples: !function utils.list_fewshot_samples
+  fewshot_delimiter: "\n\n---\n\n" # Visually separates the few-shot examples
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

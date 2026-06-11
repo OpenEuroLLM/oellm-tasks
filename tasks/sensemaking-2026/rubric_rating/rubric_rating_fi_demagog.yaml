@@ -1,0 +1,7 @@
+include: _rubric_rating.yaml
+
+task: rubric_rating_fi_demagog
+
+task_alias: fi_demagog
+
+process_docs: !function utils.process_fi_demagog
