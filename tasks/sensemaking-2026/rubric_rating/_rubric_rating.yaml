@@ -1,8 +1,6 @@
 task: rubric_rating
 dataset_path: json
-dataset_kwargs:
-  data_files:
-    test: /home/sindelar/dir/dev.rubric.json
+include: __private_data_location.yaml
 test_split: test
 output_type: multiple_choice
 process_docs: !function utils.process_docs
