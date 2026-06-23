@@ -1,0 +1,14 @@
+task: lang-ab
+dataset_path: csv ##json
+include: __private_data_location.yaml
+test_split: test
+output_type: multiple_choice
+doc_to_text: "{{text}} \nQuestion: {{question}}"
+doc_to_choice: "{{choices}}"
+doc_to_target: "{{answer}}"
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
