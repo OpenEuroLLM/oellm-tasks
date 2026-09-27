@@ -1,0 +1,126 @@
+task: ud_conllu_parse
+task_alias: UD CoNLL-U Parsing (LAS/UAS + validity)
+
+tag:
+  - dependency_parsing
+  - conllu
+  - generative
+
+output_type: generate_until
+
+# custom_dataset: !function utils.load_local_jsonl_splits
+custom_dataset: !function utils.load_ud_language
+
+training_split: train
+validation_split: dev
+test_split: test
+fewshot_split: train
+num_fewshot: 5
+fewshot_config:
+  sampler: first_n
+  split: train
+#fewshot_config:
+#  sampler: first_n
+#  samples: !function utils.selected_fewshot_samples
+
+description: |
+  Convert each input sentence into CoNLL-U style token lines.
+
+  IMPORTANT:
+  - Use exactly the provided tokens, in exactly the provided order
+  - Do not merge, split, invent, or skip tokens
+  - The number of output lines must equal the number of provided tokens
+  - Generate exactly one line per token
+  - Stop generating after the last token
+  
+  Dependency guidance:
+  - First identify the main predicate of the sentence; it should normally be the root with HEAD=0 and DEPREL=root.
+  - Attach nominal subjects to their governing predicate with nsubj.
+  - Attach direct objects to their governing predicate with obj.
+  - Determiners attach to nouns with det.
+  - Adjectival modifiers attach to nouns with amod.
+  - Adpositions attach to the nominal they introduce with case; the nominal attaches to its governor.
+  - Auxiliary verbs attach to the lexical predicate with aux.
+  - Coordinated elements attach with conj; coordinating conjunctions attach with cc.
+  - Clausal modifiers and complements should use relations such as advcl, acl, ccomp, and xcomp as appropriate.
+  - Punctuation attaches with punct.
+  - Build one connected, acyclic dependency tree with exactly one root.
+  
+  Relation distinctions:
+  - obl vs nmod:
+    Use obl when a nominal modifies a verb, adjective, or clause.
+    Use nmod when a nominal modifies another nominal.
+  
+  - ccomp vs xcomp:
+    Use ccomp when the embedded clause has its own expressed or understood subject independent of the matrix predicate.
+    Use xcomp when the embedded predicate shares its subject with the governing predicate.
+  
+  - advcl vs acl:
+    Use advcl when the clause modifies a verb or clause.
+    Use acl when the clause modifies a noun.
+  
+  - cop:
+    In copular clauses, the nonverbal predicate is the syntactic head.
+    The copular verb attaches to that predicate with cop.
+  
+  - conj and cc:
+    Attach the first conjunct normally.
+    Attach later conjuncts to the first conjunct with conj.
+    Attach the coordinating conjunction to the following conjunct with cc.
+  
+  - compound vs flat:
+    Use compound for lexical compounds.
+    Use flat mainly for names or other expressions whose internal syntactic structure is not analyzed.
+  
+  Output Format:
+  Return exactly one line per token using exactly 8 fields separated by ^:
+  
+  ID^FORM^LEMMA^UPOS^XPOS^FEATS^HEAD^DEPREL
+
+  Formatting Constraints:
+  - No comments
+  - No explanations
+  - No markdown
+  - No blank lines
+  - No extra text
+  - IDs must start at 1 and increment by 1
+
+
+doc_to_text: !function utils.doc_to_text
+doc_to_target: !function utils.doc_to_target
+process_results: !function utils.process_results
+
+metric_list:
+  - metric: uas
+    aggregation: mean
+    higher_is_better: true
+
+  - metric: las
+    aggregation: mean
+    higher_is_better: true
+
+#  - metric: conllu_invalid_rate
+#    aggregation: mean
+#    higher_is_better: false
+
+  - metric: conllu_valid_rate
+    aggregation: mean
+    higher_is_better: true
+
+#  - metric: conllu_invalid_count
+#    aggregation: !function utils.sum_metric
+#    higher_is_better: false
+
+generation_kwargs:
+  until:
+    - "\n\n"
+    - "</s>"
+    - "<|im_end|>"
+    - "<|eot_id|>"
+  do_sample: false
+  temperature: 0.0
+  max_gen_toks: 1024
+
+
+metadata:
+  version: 2.6
